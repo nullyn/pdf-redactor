@@ -65,23 +65,42 @@ class OPFDetector:
             logger.error("OPF exited %d: %s", proc.returncode, proc.stderr.strip())
             return []
 
-        try:
-            data = json.loads(proc.stdout)
-        except json.JSONDecodeError:
-            logger.error("OPF returned non-JSON: %s", proc.stdout[:200])
+        # OPF processes input line-by-line and emits one JSON object per line.
+        # Decode them all and merge spans.
+        all_spans: list[dict] = []
+        decoder = json.JSONDecoder()
+        raw = proc.stdout.strip()
+        pos = 0
+        while pos < len(raw):
+            try:
+                obj, end = decoder.raw_decode(raw, pos)
+                all_spans.extend(obj.get("detected_spans", []))
+                pos = end
+                while pos < len(raw) and raw[pos] in " \n\r\t":
+                    pos += 1
+            except json.JSONDecodeError:
+                break
+
+        if not all_spans and pos == 0 and raw:
+            logger.error("OPF returned non-JSON: %s", raw[:200])
             return []
 
         entities = []
-        for span in data.get("detected_spans", []):
+        seen: set[tuple] = set()
+        for span in all_spans:
             opf_label = span.get("label", "")
             entity_type: EntityType = OPF_LABEL_MAPPING.get(opf_label)
             if entity_type is None:
                 logger.debug("Unmapped OPF label: %s", opf_label)
                 continue
-
+            span_text = span.get("text", "")
+            key = (entity_type, span_text)
+            if key in seen:
+                continue
+            seen.add(key)
             entities.append({
                 "type": entity_type,
-                "text": span.get("text", ""),
+                "text": span_text,
                 "start": span.get("start", 0),
                 "end": span.get("end", 0),
                 "source": "OPF",
