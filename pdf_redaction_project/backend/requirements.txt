@@ -6,13 +6,7 @@ pydantic==2.5.0
 pydantic-settings==2.1.0
 PyMuPDF==1.23.8
 PyMuPDF-Fonts==1.0.6
-spacy==3.7.2
-regex==2023.12.25
-python-magic-bin==0.4.14
-celery==5.3.4
-redis==5.0.1
 structlog==24.1.0
-python-jose[cryptography]==3.3.0
 pytest==7.4.3
 pytest-asyncio==0.23.2
 httpx==0.25.2

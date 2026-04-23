@@ -29,6 +29,8 @@ class EntityType(str, Enum):
     ADDRESS = "ADDRESS"
     IP_ADDRESS = "IP_ADDRESS"
     URL = "URL"
+    ACCOUNT_NUMBER = "ACCOUNT_NUMBER"
+    SECRET = "SECRET"
 
 # Pattern definitions for regex-based detection
 REGEX_PATTERNS: Dict[EntityType, List[str]] = {
@@ -81,4 +83,16 @@ NER_LABEL_MAPPING = {
     "LOC": EntityType.LOCATION,
     "ORG": EntityType.ORG,
     "DATE": EntityType.DATE,
+}
+
+# OPF internal label → EntityType
+OPF_LABEL_MAPPING = {
+    "private_person": EntityType.PERSON,
+    "private_email": EntityType.EMAIL,
+    "private_phone": EntityType.PHONE,
+    "private_address": EntityType.ADDRESS,
+    "private_url": EntityType.URL,
+    "private_date": EntityType.DATE,
+    "account_number": EntityType.ACCOUNT_NUMBER,
+    "secret": EntityType.SECRET,
 }

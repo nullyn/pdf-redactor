@@ -5,7 +5,7 @@ Core redaction coordination
 
 from typing import List, Dict
 from app.services.pdf_handler import PDFHandler
-from app.services.ner_detector import EntityDetector
+from app.services.opf_detector import OPFDetector
 import fitz
 import logging
 
@@ -16,7 +16,7 @@ class RedactionService:
 
     def __init__(self):
         self.pdf_handler = PDFHandler()
-        self.entity_detector = EntityDetector()
+        self.entity_detector = OPFDetector()
 
     def detect_pii_in_pdf(self, pdf_path: str) -> Dict:
         """Detect all PII in a PDF file."""
