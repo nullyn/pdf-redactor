@@ -38,3 +38,6 @@ ENV/
 
 # Temp files
 /tmp/
+
+# Claude
+CLAUDE.md
